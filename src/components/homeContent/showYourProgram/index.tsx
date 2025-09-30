@@ -1,7 +1,13 @@
+import React from "react";
+
 import Image from "next/image";
 import { PiArrowRight, PiCaretUpDown, PiLockSimple } from "react-icons/pi";
 
-export function ShowYourProgram() {
+interface ShowYourProgramProps {
+    setSteps: React.Dispatch<React.SetStateAction<string>>
+}
+
+export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
     return (
         <>
             <div className="col-span-2">
@@ -46,7 +52,7 @@ export function ShowYourProgram() {
                         </div>
                     </div>
                 </div>
-                <button className="ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
+                <button onClick={() => setSteps('miles')} className="ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
             </div>
             <div className="border border-gray-300 p-3 rounded-lg h-fit">
                 <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>

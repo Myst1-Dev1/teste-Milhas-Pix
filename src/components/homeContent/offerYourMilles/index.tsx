@@ -1,6 +1,15 @@
+'use client';
+import React from "react";
+import { useState } from "react";
 import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown } from "react-icons/pi";
 
-export function OfferYourMilles() {
+interface OfferYourMillesProps {
+    setSteps: React.Dispatch<React.SetStateAction<string>>
+}
+
+export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
+    const [toogleMidia, setToogleMidia] = useState(false);
+
     return (
         <>
             <div className="col-span-2">
@@ -47,16 +56,28 @@ export function OfferYourMilles() {
                             </div>
                         </div>
                     </div>
-                    <div className="p-4 flex items-center gap-3">
-                        <div className="w-14 h-8 rounded-full bg-[#E2E2E2] flex items-center p-1 cursor-pointer">
-                            <div className="bg-white h-6 w-6 rounded-full shadow-md"></div>
+                    <div>
+                        <div className="p-4 flex items-center gap-3">
+                            <div onClick={() => setToogleMidia(!toogleMidia)} className={`cursor-pointer w-14 h-8 rounded-full ${toogleMidia ? 'bg-[#1E90FF]' : 'bg-[#E2E2E2]'} flex items-center p-1`}>
+                                <div className={`bg-white h-6 w-6 rounded-full shadow-md transition-all duration-500 ${toogleMidia ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                            </div>
+                            <h3 className="text-[#8F8F8F] font-medium">Definir média de milhas por passageiro</h3>
                         </div>
-                        <h3 className="text-[#8F8F8F] font-medium">Definir média de milhas por passageiro</h3>
+                        {toogleMidia &&
+                            <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+                                <div className="font-medium border border-[#E2E2E2] text-[#2E3D50] rounded-full py-2 px-3 w-full">
+                                    10.000
+                                </div>
+                                <div className="px-3 md:text-xs text-lg flex gap-1 justify-center items-center font-medium bg-[#12A19A1A] text-[#12A19A] rounded-full py-2 w-full">
+                                    Melhor média para a sua oferta: <span>27.800</span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className="flex justify-between mt-4">
-                    <button className="font-medium p-3 max-w-28 w-full rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
-                    <button className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
+                    <button onClick={() => setSteps('program')} className="font-medium p-3 max-w-28 w-full rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
+                    <button onClick={() => setSteps('loyalty')} className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
                 </div>
             </div>
             <div>
