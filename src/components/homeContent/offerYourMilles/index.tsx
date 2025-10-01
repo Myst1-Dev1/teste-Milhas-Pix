@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { useState } from "react";
-import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown } from "react-icons/pi";
+import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown, PiPlus } from "react-icons/pi";
 
 interface OfferYourMillesProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
@@ -12,7 +12,7 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
 
     return (
         <>
-            <div className="col-span-2">
+            <div className="col-span-1 lg:col-span-2 px-4 lg:px-0">
                 <div className="w-full rounded-lg border border-[#E2E2E2]">
                     <div className="p-3 border-b border-[#E2E2E2] flex justify-between items-center">
                         <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">02.</span>  Oferte suas milhas</h2>
@@ -54,6 +54,14 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                                 </div>
                                 <PiCaretDoubleDown className="text-[#DC2B2B] text-lg shrink-0 -ml-5" />
                             </div>
+                            <span className="block lg:hidden text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>
+                            <div className="lg:hidden flex gap-2 flex-wrap">
+                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">1º R$ 15,23</span>
+                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">2º R$ 15,23</span>
+                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">3º R$ 15,23</span>
+                                <span className="text-[#12A19A] bg-[#12A19A1A] border-2 border-[#12A19A] rounded-full py-1 px-2">Você 4º R$ 15,23</span>
+                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">5º R$ 15,23</span>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -68,24 +76,27 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                                 <div className="font-medium border border-[#E2E2E2] text-[#2E3D50] rounded-full py-2 px-3 w-full">
                                     10.000
                                 </div>
-                                <div className="px-3 md:text-xs text-lg flex gap-1 justify-center items-center font-medium bg-[#12A19A1A] text-[#12A19A] rounded-full py-2 w-full">
-                                    Melhor média para a sua oferta: <span>27.800</span>
+                                <div className="px-3 md:text-xs text-lg flex gap-1 justify-center items-center font-medium bg-transparent lg:bg-[#12A19A1A] text-[#12A19A] rounded-full py-2 w-full">
+                                    Melhor média para a sua oferta: <span className="font-bold">27.800</span>
                                 </div>
                             </div>
                         }
                     </div>
                 </div>
-                <div className="flex justify-between mt-4">
+                <div className="hidden lg:flex justify-between mt-4">
                     <button onClick={() => setSteps('program')} className="font-medium p-3 max-w-28 w-full rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
                     <button onClick={() => setSteps('loyalty')} className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
                 </div>
             </div>
-            <div>
+            <div className="px-4 lg:px-0">
                 <div className="border border-gray-300 p-3 rounded-lg h-fit">
-                    <h3 className="text-[#2E3D50] font-medium text-lg">Média de milhas</h3>
+                    <div className="flex items-center">
+                        <h3 className="text-[#2E3D50] font-medium text-lg">Média de milhas</h3>
+                        <PiPlus className="ml-auto block primary-color text-xl lg:hidden" />
+                    </div>
                     <p className="font-normal text-sm text-[#475569]">Ao vender mais de 20.000 milhas, ative as Opções Avançadas para definir a média de milhas por emissão.</p>
                 </div>
-                <div className="mt-3">
+                <div className="hidden lg:block mt-3">
                     <h3 className="text-[#2E3D50] font-medium text-lg">Ranking de ofertas</h3>
                     <div className="mt-3 border border-gray-300 rounded-lg">
                         <div className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
@@ -112,12 +123,16 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                     </div>
                 </div>
                 <div className="mt-3">
-                    <h3 className="text-[#2E3D50] font-medium text-lg">Receba até:</h3>
-                    <div className="flex justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-medium text-lg">
+                    <h3 className="hidden lg:block text-[#2E3D50] font-medium text-lg">Receba até:</h3>
+                    <div className="hidden lg:flex justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-medium text-lg">
                         <span>R$</span>
                         24.325,23
                     </div>
                 </div>
+            </div>
+            <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
+                <span className="font-medium">Receba até</span>
+                R$24.325,23
             </div>
         </>
     )

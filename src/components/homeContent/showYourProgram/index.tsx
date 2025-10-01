@@ -1,7 +1,7 @@
 import React from "react";
 
 import Image from "next/image";
-import { PiArrowRight, PiCaretUpDown, PiLockSimple } from "react-icons/pi";
+import { PiArrowRight, PiArrowsCounterClockwise, PiCaretUpDown, PiLockSimple, PiMinus, PiPlus } from "react-icons/pi";
 
 interface ShowYourProgramProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
@@ -10,12 +10,21 @@ interface ShowYourProgramProps {
 export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
     return (
         <>
-            <div className="col-span-2">
+            <div className="col-span-1 lg:col-span-2 px-4 lg:px-0">
                 <div className="w-full h-fit rounded-lg border border-[#E2E2E2]">
                     <div className="p-4 border-b border-[#E2E2E2]">
                         <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">01.</span>  Escolha o programa de fidelidade</h2>
                     </div>
-                    <div className="p-4 flex justify-between gap-3">
+                    <div className="mt-3 px-4 block lg:hidden">
+                        <div className="flex justify-between items-center outline-none text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full p-3 w-full appearance-none pr-10">
+                            <div className="flex items-center gap-3">
+                                <PiArrowsCounterClockwise className="primary-color" />
+                                Tudo Azul
+                            </div>
+                            <Image src="/images/tudoAzul-logo.png" className="w-13 object-cover" width={200} height={200} alt="logo do tudo azul" />
+                        </div>
+                    </div>
+                    <div className="p-4 hidden lg:flex justify-between gap-3">
                         <div className="cursor-pointer border-2 border-[#1E90FF] rounded-full  w-full p-2 grid place-items-center">
                             <Image src="/images/tudoAzul-logo.png" className="w-13 object-contain" width={200} height={200} alt="logo do tudo azul" />
                         </div>
@@ -52,11 +61,22 @@ export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
                         </div>
                     </div>
                 </div>
-                <button onClick={() => setSteps('miles')} className="ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
+                <button onClick={() => setSteps('miles')} className="hidden ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white lg:flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
             </div>
-            <div className="border border-gray-300 p-3 rounded-lg h-fit">
-                <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>
-                <p className="font-normal text-sm text-[#475569]">Escolha de qual programa de fidelidade você quer vender suas milhas. Use apenas contas em seu nome.</p>
+            <div className="w-full px-4 lg:px-0">
+                <div className="block lg:hidden border border-gray-300 p-3 rounded-lg h-fit mb-4">
+                    <div className="flex items-center">
+                        <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>
+                        <PiPlus className="ml-auto block primary-color text-xl lg:hidden" />
+                    </div>
+                </div>
+                <div className="border border-gray-300 p-3 rounded-lg h-fit mb-8">
+                    <div className="flex items-center">
+                        <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>
+                        <PiMinus className="ml-auto block lg:hidden" />
+                    </div>
+                    <p className="font-normal text-sm text-[#475569]">Escolha de qual programa de fidelidade você quer vender suas milhas. Use apenas contas em seu nome.</p>
+                </div>
             </div>
         </>
     )

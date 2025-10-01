@@ -1,7 +1,7 @@
 import React from "react";
 
 import Image from "next/image";
-import { PiArrowLeft, PiArrowRight, PiLockSimple, PiUserCircle } from "react-icons/pi";
+import { PiArrowLeft, PiArrowRight, PiLockSimple, PiMinus, PiUserCircle } from "react-icons/pi";
 import Link from "next/link";
 
 interface LoyaltyProgramProps {
@@ -11,10 +11,11 @@ interface LoyaltyProgramProps {
 export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
     return (
         <>
-            <div className="col-span-2">
+            <div className="col-span-1 px-4 lg:px-0 lg:col-span-2">
                 <div className="w-full h-fit rounded-lg border border-[#E2E2E2]">
                     <div className="p-4 border-b border-[#E2E2E2] flex justify-between items-center">
-                        <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">03.</span>  Insira os dados do programa de fidelidade</h2>
+                        <h2 className="font-medium text-[#2E3D50] text-lg hidden lg:block"><span className="primary-color">03.</span>  Insira os dados do programa de fidelidade</h2>
+                        <h2 className="font-medium text-[#2E3D50] text-lg block lg:hidden"><span className="primary-color">03.</span>  Dados do programa</h2>
                         <Image src="/images/tudoAzul-logo.png" className="shrink-0 w-14 object-cover" width={200} height={200} alt="logo do tudo azul" />
                     </div>
                     <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
@@ -53,7 +54,7 @@ export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-between flex-col lg:flex-row gap-4 lg:gap-0 mt-4">
+                <div className="hidden lg:flex justify-between flex-col lg:flex-row gap-4 lg:gap-0 mt-4">
                     <button onClick={() => setSteps('miles')} className="font-medium p-3 w-fit rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
                     <div className="flex items-center flex-col lg:flex-row gap-3">
                         <p className="font-medium text-[#2E3D50] text-xs">Ao prosseguir você concorda com os <Link href="" className="border-b border-gray-400 transition-all duration-500 hover:text-[#1E90FF] hover:border-[#1E90FF]">Termos de uso</Link></p>
@@ -61,9 +62,18 @@ export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
                     </div>
                 </div>
             </div>
-            <div className="border border-gray-300 p-3 rounded-lg h-fit">
-                <h3 className="text-[#2E3D50] font-medium text-lg">Dados da conta</h3>
-                <p className="font-normal text-sm text-[#475569]">Por favor, insira os dados da conta que deseja cadastrar e verifique se estão corretos.</p>
+            <div className=" px-4 lg:px-0">
+                <div className="border border-gray-300 p-3 rounded-lg h-fit">
+                    <div className="flex items-center">
+                        <h3 className="text-[#2E3D50] font-medium text-lg">Dados da conta</h3>
+                        <PiMinus className="ml-auto block text-[#8F8F8F] text-xl lg:hidden" />
+                    </div>
+                    <p className="font-normal text-sm text-[#475569]">Por favor, insira os dados da conta que deseja cadastrar e verifique se estão corretos.</p>
+                </div>
+            </div>
+            <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
+                <span className="font-medium">Receba até</span>
+                R$24.325,23
             </div>
         </>
     )
