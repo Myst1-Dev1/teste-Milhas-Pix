@@ -10,6 +10,20 @@ import Link from "next/link";
 
 export function HomeContent() {
     const [steps, setSteps] = useState('program');
+    const [formData, setFormData] = useState(
+        { 
+            product: "Liminar", 
+            cpf: "",
+            program: "",
+            milesValue: '',
+            milesToOffer: '',
+            howToReceive: '',
+            cpfOfTheHolder: '',
+            accessLogin: '',
+            password: '',
+            phone: ''
+        }
+    );
 
     const stepsOrder = ["program", "miles", "loyalty", "finish"];
     const currentIndex = stepsOrder.indexOf(steps);
@@ -77,12 +91,10 @@ export function HomeContent() {
                         </div>
                     </div>
                 </div>
-                <form className="col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-5" action="">
-                    {steps === 'program' && <ShowYourProgram setSteps={setSteps} />}
-                    {steps === 'miles' && <OfferYourMilles setSteps={setSteps} />}
-                    {steps === 'loyalty' && <LoyaltyProgram setSteps={setSteps} />}
+                    {steps === 'program' && <ShowYourProgram setSteps={setSteps} formData={formData} />}
+                    {steps === 'miles' && <OfferYourMilles setSteps={setSteps} formData={formData} />}
+                    {steps === 'loyalty' && <LoyaltyProgram setSteps={setSteps} formData={formData} />}
                     {steps === 'finish' && <FinishOrder />}
-                </form>
             </div>
             <div className="lg:hidden border-t border-gray-300 p-4">
                 {currentIndex === 3 ? 
