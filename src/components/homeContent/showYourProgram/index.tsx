@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Image from "next/image";
 import { PiArrowRight, PiArrowsCounterClockwise, PiCaretUpDown, PiLockSimple, PiMinus, PiPlus } from "react-icons/pi";
+import { handleCpfChange } from "@/utils/masks/cpf_mask";
 
 interface ShowYourProgramProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
 }
 
 export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
+    const [selectedProgram, setSelectedProgram] = useState('Tudo Azul');
+    const [cpf, setCpf] = useState('');
+    const [showError, setShowError] = useState(false);
+
+    const isCpfValid = cpf.replace(/\D/g, '').length === 11;
+
+    const handleProceed = () => {
+        if (!isCpfValid) {
+            setShowError(true);
+            return;
+        }
+        setShowError(false);
+        setSteps('miles');
+    }
+
     return (
         <>
             <div className="col-span-1 lg:col-span-2 px-4 lg:px-0">
@@ -25,17 +41,17 @@ export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
                         </div>
                     </div>
                     <div className="p-4 hidden lg:flex justify-between gap-3">
-                        <div className="cursor-pointer border-2 border-[#1E90FF] rounded-full  w-full p-2 grid place-items-center">
+                        <div onClick={() => setSelectedProgram('Tudo Azul')} className={`cursor-pointer border-2 ${selectedProgram === 'Tudo Azul' ? 'border-[#1E90FF]' : 'border-gray-300 opacity-50'} rounded-full  w-full p-2 grid place-items-center`}>
                             <Image src="/images/tudoAzul-logo.png" className="w-13 object-contain" width={200} height={200} alt="logo do tudo azul" />
                         </div>
-                        <div className="cursor-pointer border border-gray-300 opacity-40 rounded-full  w-full p-2 grid place-items-center">
-                            <Image src="/images/smiles-logo.png" className="w-13 object-contain" width={200} height={200} alt="logo do tudo azul" />
+                        <div onClick={() => setSelectedProgram('Smiles')} className={`cursor-pointer border-2 ${selectedProgram === 'Smiles' ? 'border-[#1E90FF]' : 'border-gray-300 opacity-50'} rounded-full  w-full p-2 grid place-items-center`}>
+                            <Image src="/images/smiles-logo.png" className="w-13 object-contain" width={200} height={200} alt="logo do smiles" />
                         </div>
-                        <div className="cursor-pointer border border-gray-300 opacity-40 rounded-full  w-full p-2 grid place-items-center">
-                            <Image src="/images/latamPass-logo.png" className="w-16 object-contain" width={200} height={200} alt="logo do tudo azul" />
+                        <div onClick={() => setSelectedProgram('Latam Pass')} className={`cursor-pointer border-2 ${selectedProgram === 'Latam Pass' ? 'border-[#1E90FF]' : 'border-gray-300 opacity-50'} rounded-full  w-full p-2 grid place-items-center`}>
+                            <Image src="/images/latamPass-logo.png" className="w-16 object-contain" width={200} height={200} alt="logo do latam pass" />
                         </div>
-                        <div className="cursor-pointer border border-gray-300 opacity-40 rounded-full  w-full p-2 grid place-items-center">
-                            <Image src="/images/airPortugal-logo.png" className="w-20 object-contain" width={200} height={200} alt="logo do tudo azul" />
+                        <div onClick={() => setSelectedProgram('Air Portugal')} className={`cursor-pointer border-2 ${selectedProgram === 'Air Portugal' ? 'border-[#1E90FF]' : 'border-gray-300 opacity-50'} rounded-full  w-full p-2 grid place-items-center`}>
+                            <Image src="/images/airPortugal-logo.png" className="w-20 object-contain" width={200} height={200} alt="logo do air portugal" />
                         </div>
                     </div>
                     <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
@@ -48,6 +64,7 @@ export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
                                     className="outline-none text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full p-3 w-full appearance-none pr-10"
                                 >
                                     <option value="Liminar">Liminar</option>
+                                    <option value="Comum">Comum</option>
                                 </select>
                                 <PiCaretUpDown className="absolute right-2 top-1/2 -translate-y-1/2 primary-color text-lg pointer-events-none" />
                             </div>
@@ -55,13 +72,24 @@ export function ShowYourProgram({ setSteps }:ShowYourProgramProps) {
                         <div className="flex flex-col gap-2">
                             <label htmlFor="product" className="text-[#2E3D50] font-medium text-lg">CPF&#39;s Disponíveis</label>
                             <div className="flex justify-between items-center gap-3 text-[#2E3D50] font-medium border bg-[#F9F9F9] border-[#E2E2E2] rounded-full py-3 w-full">
-                                <input type="text" className="outline-none px-3" placeholder="Ilimitado" />
+                                <input type="text" name="cpf" value={cpf}
+                                    onInput={(e) => {
+                                        handleCpfChange(e);
+                                        setCpf(e.currentTarget.value);
+                                    }} 
+                                    maxLength={11} 
+                                    className="outline-none px-3" 
+                                    placeholder="Ilimitado" 
+                                />
                                 <PiLockSimple className="mr-3 text-[#8F8F8F] text-lg" />
                             </div>
+                            {showError && !isCpfValid && (
+                                <p className="text-lg text-red-600 font-bold mt-1">CPF inválido</p>
+                            )}
                         </div>
                     </div>
                 </div>
-                <button onClick={() => setSteps('miles')} className="hidden ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white lg:flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
+                <button type="button" onClick={handleProceed} className="hidden ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white lg:flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
             </div>
             <div className="w-full px-4 lg:px-0">
                 <div className="block lg:hidden border border-gray-300 p-3 rounded-lg h-fit mb-4">

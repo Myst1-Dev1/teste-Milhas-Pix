@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Image from "next/image";
 import { PiArrowLeft, PiArrowRight, PiLockSimple, PiMinus, PiUserCircle } from "react-icons/pi";
 import Link from "next/link";
+import { handleCpfChange } from "@/utils/masks/cpf_mask";
+import { handlePhoneChange } from "@/utils/masks/phone_mask";
 
 interface LoyaltyProgramProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
 }
 
 export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
+    const [formData, setFormData] = useState({
+        cpf: '',
+        login: '',
+        password: '',
+        phone: ''
+    });
+
+    const [error, setError] = useState<string | null>(null);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleProceed = () => {
+        if (!formData.cpf || !formData.login || !formData.password || !formData.phone) {
+            setError("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        setError(null);
+        setSteps('finish');
+    };
+
     return (
         <>
             <div className="col-span-1 px-4 lg:px-0 lg:col-span-2">
@@ -22,20 +48,20 @@ export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
                         <div className="flex flex-col gap-2">
                             <label htmlFor="product" className="text-[#2E3D50] font-medium text-lg">CPF do Titular</label>
                             <div className="flex justify-between items-center gap-3 text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full py-3 w-full">
-                                <input type="tel" className="outline-none px-3" placeholder="123.456.798-00" />
+                                <input type="tel" className="outline-none px-3" onChange={handleInputChange} onInput={handleCpfChange} maxLength={11} placeholder="123.456.798-00" />
                                 <PiUserCircle className="mr-3 primary-color text-lg" />
                             </div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <label htmlFor="product" className="text-[#2E3D50] font-medium text-lg">Login de acesso</label>
-                            <input type="text" className="outline-none px-3 flex justify-between items-center gap-3 text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full py-3 w-full" placeholder="Ilimitado" />
+                            <input type="text" onChange={handleInputChange} className="outline-none px-3 flex justify-between items-center gap-3 text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full py-3 w-full" placeholder="Ilimitado" />
                         </div>
                     </div>
                     <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                         <div className="flex flex-col gap-2">
                             <label htmlFor="product" className="text-[#2E3D50] font-medium text-lg">Senha de acesso</label>
                             <div className="flex justify-between items-center gap-3 text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full py-3 w-full">
-                                <input type="number" className="outline-none px-3" placeholder="******" />
+                                <input type="password" onChange={handleInputChange} className="outline-none px-3" placeholder="******" />
                                 <PiLockSimple className="mr-3 primary-color text-lg" />
                             </div>
                         </div>
@@ -47,18 +73,19 @@ export function LoyaltyProgram({ setSteps }:LoyaltyProgramProps) {
                                         R$
                                         <Image src="/images/brasilFlag.png" className="w-4 h-4 object-cover" width={200} height={200} alt="bandeira do Brasil" />
                                     </span>
-                                    <input type="number" className="outline-none px-3 placeholder-[#2E3D50] w-full" placeholder="(00)00000-0000" />
+                                    <input type="text" onChange={handleInputChange} onInput={handlePhoneChange} maxLength={15} className="outline-none px-3 placeholder-[#2E3D50] w-full" placeholder="(00)00000-0000" />
                                 </div>
                                 <Image src="/images/whatsapp-logo.png" className="w-5 h-5 object-cover shrink-0 -ml-3" width={200} height={200} alt="logo do whatsapp" />
                             </div>
                         </div>
                     </div>
+                    {error && <p className="text-red-600 text-center py-3">{error}</p>}
                 </div>
                 <div className="hidden lg:flex justify-between flex-col lg:flex-row gap-4 lg:gap-0 mt-4">
                     <button onClick={() => setSteps('miles')} className="font-medium p-3 w-fit rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
                     <div className="flex items-center flex-col lg:flex-row gap-3">
                         <p className="font-medium text-[#2E3D50] text-xs">Ao prosseguir você concorda com os <Link href="" className="border-b border-gray-400 transition-all duration-500 hover:text-[#1E90FF] hover:border-[#1E90FF]">Termos de uso</Link></p>
-                        <button onClick={() => setSteps('finish')} className="font-medium px-4 py-3 w-fit rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Concluir <PiArrowRight className="text-lg" /></button>
+                        <button onClick={handleProceed} type="button" className="font-medium px-4 py-3 w-fit rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Concluir <PiArrowRight className="text-lg" /></button>
                     </div>
                 </div>
             </div>

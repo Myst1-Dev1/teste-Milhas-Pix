@@ -1,36 +1,20 @@
+'use server';
+
+import { Offer } from "@/@types/Offer";
 import Image from "next/image";
 import Link from "next/link";
 import { PiCaretDownBold, PiMagnifyingGlass } from "react-icons/pi";
 
-export default function MyOffers() {
-    const ofertas = [
-    {
-      programa: "Smiles",
-      tipo: "Comum",
-      logo: "/images/smiles-logo.png",
-      status: "Ativa",
-      statusColor: "text-[#10B981]",
-      statusBg: "bg-[#D1FAE5] text-[#065F46]",
-      id: "Q2455",
-      login: "coucouli@gmail.com",
-      milhas: "100.000.000",
-      data: "21 jun 2025",
-      cor: "text-[#F57921]",
-    },
-    {
-      programa: "Tudo Azul",
-      tipo: "Liminar",
-      logo: "/images/smiles-logo.png",
-      status: "Em utilização",
-      statusColor: "text-[#1E90FF]",
-      statusBg: "bg-[#C1D8EE] text-[#002040]",
-      id: "Q2455",
-      login: "coucouli@gmail.com",
-      milhas: "100.000.000",
-      data: "21 jun 2025",
-      cor: "text-[#40B6E6]",
-    },
-  ];
+export default async function MyOffers() {
+
+    const res = await fetch('https://api.milhaspix.com/simulate-offers-list',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const data = await res.json();
 
     return (
         <>
@@ -76,40 +60,40 @@ export default function MyOffers() {
                                 </tr>
                             </thead>
                             <tbody className="text-sm">
-                                {ofertas.map((oferta, i) => (
+                                {data?.offers?.map((offer: Offer, i:number) => (
                                     <tr key={i} className="border-b border-gray-300">
                                     <td className="p-3 flex items-center gap-2">
                                         <Image
-                                        width={40}
-                                        height={40}
-                                        src={oferta.logo}
-                                        alt={oferta.programa}
-                                        className="w-10 h-10 object-contain"
+                                            width={400}
+                                            height={400}
+                                            src={`/images/${offer.loyaltyProgram}-img.png` || "/images/smiles-logo.png"}
+                                            alt={offer.loyaltyProgram}
+                                            className="w-10 h-10 rounded-full aspect-square object-cover"
                                         />
                                         <div>
-                                            <p className={`font-bold ${oferta.cor}`}>{oferta.programa}</p>
-                                            <span className="text-xs text-[#121212]">{oferta.tipo}</span>
+                                            <p className={`font-bold ${offer.loyaltyProgram === 'Smiles' ? 'text-[#F57921]' : 'text-[#40B6E6]'}`}>{offer.loyaltyProgram}</p>
+                                            <span className="text-xs text-[#121212]">{offer.offerType}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <span
-                                        className={`px-3 py-1 rounded-full text-xs ${oferta.statusBg}`}
+                                            className={`px-3 py-1 rounded-full text-xs ${offer.offerStatus === 'Em Utilizacao' ? 'bg-[#C1D8EE]' : 'bg-[#D1FAE5]'}`}
                                         >
-                                        <span className={oferta.statusColor}>●</span>{" "}
-                                        {oferta.status}
+                                        <span className={`${offer.offerStatus === 'Em Utilizacao' ? 'primary-color' : 'text-[#10B981]'}`}>●</span>{" "}
+                                            {offer.offerStatus}
                                         </span>
                                     </td>
-                                        <td>{oferta.id}</td>
-                                        <td>{oferta.login}</td>
-                                        <td>{oferta.milhas}</td>
-                                        <td>{oferta.data}</td>
+                                        <td>{offer.offerId}</td>
+                                        <td>{offer.accountLogin}</td>
+                                        <td>10.0000</td>
+                                        <td>{offer.createdAt}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
 
                         <div className="block md:hidden space-y-4">
-                            {ofertas.map((oferta, i) => (
+                            {data?.offers?.map((offer:Offer, i:number) => (
                             <div
                                 key={i}
                                 className="border border-gray-300 rounded-xl space-y-2"
@@ -119,38 +103,41 @@ export default function MyOffers() {
                                         <Image
                                             width={40}
                                             height={40}
-                                            src={oferta.logo}
-                                            alt={oferta.programa}
+                                            src={`/images/${offer.loyaltyProgram}-img.png` || "/images/smiles-logo.png"}
+                                            alt={offer.loyaltyProgram}
                                             className="w-10 h-10 object-contain"
                                         />
-                                        <p className={`font-bold ${oferta.cor}`}>
-                                            {oferta.programa}{" "}
+                                        <p className={`font-bold ${offer.loyaltyProgram === 'Smiles' ? 'text-[#F57921]' : 'text-[#40B6E6]'}`}>
+                                            {offer.loyaltyProgram}{" "}
                                             <span className="text-[#121212] font-normal">
-                                                {oferta.tipo}
+                                                {offer.offerType}
                                             </span>
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-2 items-end">
                                         <span
-                                            className={`px-3 py-1 rounded-full text-xs ${oferta.statusBg}`}
+                                            className={`text-xs px-2 rounded-md font-medium ${
+                                            offer.offerStatus === "Em Utilizacao"
+                                                ? "primary-color bg-[#C1D8EE]"
+                                                : "text-[#10B981] bg-[#D1FAE5]"
+                                            }`}
                                         >
-                                        <span className={oferta.statusColor}>●</span>{" "}
-                                            {oferta.status}
+                                            ● {offer.offerStatus}
                                         </span>
-                                        <span className="text-xs text-gray-500">{oferta.data}</span>
+                                        <span className="text-xs text-gray-500">{offer.createdAt}</span>
                                     </div>
                                 </div>
                                 <div className="border-t border-gray-300 p-3 pt-2 text-sm">
                                     <p className="w-full flex justify-between">
                                         <span className="font-semibold">ID da oferta:</span>{" "}
-                                        {oferta.id}
+                                        {offer.offerId}
                                     </p>
                                     <p className="w-full flex justify-between">
-                                        <span className="font-semibold">Login:</span> {oferta.login}
+                                        <span className="font-semibold">Login:</span> {offer.accountLogin}
                                     </p>
                                     <p className="w-full flex justify-between">
                                         <span className="font-semibold">Milhas ofertadas:</span>{" "}
-                                        {oferta.milhas}
+                                        {10.000}
                                     </p>
                                 </div>
                             </div>

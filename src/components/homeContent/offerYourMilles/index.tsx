@@ -1,4 +1,5 @@
 'use client';
+
 import React from "react";
 import { useState } from "react";
 import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown, PiPlus } from "react-icons/pi";
@@ -7,8 +8,63 @@ interface OfferYourMillesProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
 }
 
+type RankingData = {
+    mile_value: number;
+    description: string;
+    position: number
+}
+
 export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
+    const [error, setError] = useState<string | null>(null);
     const [toogleMidia, setToogleMidia] = useState(false);
+    const [milesValue, setMilesValue] = useState('');
+    const [milesToOffer, setMilesToOffer] = useState('');
+    const [rankingData, setRankingData] = useState<RankingData[]>([]);
+    const [selectHowToReceive, setSelectHowToReceive] = useState('Imediato')
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+
+        value = value.replace(/\D/g, "");
+
+        const floatValue = (Number(value) / 100).toFixed(2);
+
+        const formatted = new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        }).format(Number(floatValue));
+
+        setMilesValue(formatted);
+
+        fetchRanking(floatValue);
+    };
+
+    const fetchRanking = async (value: string) => {
+        try {
+            const response = await fetch(`https://api.milhaspix.com/simulate-ranking?mile_value=${value}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            setRankingData(data);
+        } catch (error) {
+            console.error("Erro ao buscar ranking:", error);
+        }
+    };
+
+    const handleProceed = () => {
+        setError(null);
+
+        if (!milesToOffer || !milesValue) {
+            setError("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        setSteps('loyalty');
+    }
 
     return (
         <>
@@ -21,16 +77,16 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                     <div className="p-3">
                         <h2 className="mb-2 font-medium text-[#2E3D50]">Quero receber</h2>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                            <div className="cursor-pointer border-2 border-[#1E90FF] font-medium rounded-full  w-full p-2 grid place-items-center">
+                            <div onClick={() => setSelectHowToReceive('Imediato')} className={`cursor-pointer ${selectHowToReceive === 'Imediato' ? 'border-2 border-[#1E90FF]' : 'border border-gray-300 opacity-40'} font-medium rounded-full  w-full p-2 grid place-items-center`}>
                                 Imediato
                             </div>
-                            <div className="cursor-pointer border border-gray-300 font-medium opacity-40 rounded-full  w-full p-2 grid place-items-center">
+                            <div onClick={() => setSelectHowToReceive('em 2 dias')} className={`cursor-pointer ${selectHowToReceive === 'em 2 dias' ? 'border-2 border-[#1E90FF]' : 'border border-gray-300 opacity-40'} font-medium rounded-full  w-full p-2 grid place-items-center`}>
                                 em 2 dias
                             </div>
-                            <div className="cursor-pointer border border-gray-300 font-medium opacity-40 rounded-full  w-full p-2 grid place-items-center">
+                            <div onClick={() => setSelectHowToReceive('em 7 dias')} className={`cursor-pointer ${selectHowToReceive === 'em 7 dias' ? 'border-2 border-[#1E90FF]' : 'border border-gray-300 opacity-40'} font-medium rounded-full  w-full p-2 grid place-items-center`}>
                                 em 7 dias
                             </div>
-                            <div className="cursor-pointer border border-gray-300 font-medium opacity-40 rounded-full  w-full p-2 grid place-items-center">
+                            <div onClick={() => setSelectHowToReceive('depois do voo')} className={`cursor-pointer ${selectHowToReceive === 'depois do voo' ? 'border-2 border-[#1E90FF]' : 'border border-gray-300 opacity-40'} font-medium rounded-full  w-full p-2 grid place-items-center`}>
                                 Depois do voo
                             </div>
                         </div>
@@ -39,7 +95,7 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                         <div className="flex flex-col gap-3">
                             <label htmlFor="milhas" className="font-medium text-[#2E3D50] text-lg">Milhas ofertadas</label>
                             <div className="flex justify-between items-center gap-3 font-medium border border-[#E2E2E2] rounded-full py-2 w-full">
-                                <input type="number" className="outline-none px-3 placeholder-[#2E3D50]" placeholder="10.000" />
+                                <input type="number" name="milesToOffer" className="outline-none px-3 placeholder-[#2E3D50]" value={milesToOffer} onChange={e => setMilesToOffer(e.target.value)} placeholder="10.000" />
                                 <PiAirplaneInFlightBold className="mr-3 text-[#1E90FF] text-lg" />
                             </div>
                         </div>
@@ -50,7 +106,14 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                                     <span className="bg-red-100 text-[#DC2B2B] px-2 py-1 rounded-full text-sm font-semibold">
                                         R$
                                     </span>
-                                    <input type="number" className="outline-none px-3 placeholder-[#2E3D50]" placeholder="25,00" />
+                                    <input 
+                                        type="text" 
+                                        name="milesValue"
+                                        className="outline-none px-3 placeholder-[#2E3D50]" 
+                                        placeholder="25,00" 
+                                        value={milesValue}
+                                        onChange={handleChange}
+                                    />
                                 </div>
                                 <PiCaretDoubleDown className="text-[#DC2B2B] text-lg shrink-0 -ml-5" />
                             </div>
@@ -64,6 +127,7 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                             </div>
                         </div>
                     </div>
+                        {error && <p className="text-red-500 py-3 text-center">{error}</p>}
                     <div>
                         <div className="p-4 flex items-center gap-3">
                             <div onClick={() => setToogleMidia(!toogleMidia)} className={`cursor-pointer w-14 h-8 rounded-full ${toogleMidia ? 'bg-[#1E90FF]' : 'bg-[#E2E2E2]'} flex items-center p-1`}>
@@ -83,9 +147,9 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                         }
                     </div>
                 </div>
-                <div className="hidden lg:flex justify-between mt-4">
+                <div className="hidden lg:flex justify-between mt-4 mb-0 lg:mb-4">
                     <button onClick={() => setSteps('program')} className="font-medium p-3 max-w-28 w-full rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
-                    <button onClick={() => setSteps('loyalty')} className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
+                    <button onClick={handleProceed} type="button" className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">Prosseguir <PiArrowRight className="text-lg" /></button>
                 </div>
             </div>
             <div className="px-4 lg:px-0">
@@ -99,27 +163,15 @@ export function OfferYourMilles({ setSteps }:OfferYourMillesProps) {
                 <div className="hidden lg:block mt-3">
                     <h3 className="text-[#2E3D50] font-medium text-lg">Ranking de ofertas</h3>
                     <div className="mt-3 border border-gray-300 rounded-lg">
-                        <div className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                            <span className="primary-color">1º</span>
-                            R$ 15,23
-                        </div>
-                        <div className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                            <span className="primary-color">2º</span>
-                            R$ 15,23
-                        </div>
-                        <div className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                            <span className="primary-color">3º</span>
-                            R$ 15,23
-                        </div>
-                        <div className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                            <span className="primary-color">4º</span>
-                            R$ 15,23
-                        </div>
-                        <div className="font-medium flex gap-4 border-b border-gray-300 text-[#12A19A] p-3">
-                            <span>5º</span>
-                            R$ 15,23
-                            <span className="bg-[#12A19A1A] px-3 ml-auto rounded-full">Você</span>
-                        </div>
+                        {rankingData?.map((rank, index:number) => (
+                            <div key={index} className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
+                                <span className="primary-color">{rank.position}º</span>
+                                {Intl.NumberFormat('pt-br', {
+                                    style:'currency',
+                                    currency: 'BRL'
+                                }).format(rank.mile_value)}
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="mt-3">
