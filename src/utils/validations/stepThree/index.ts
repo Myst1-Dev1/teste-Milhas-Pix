@@ -17,7 +17,7 @@ export const stepThreeSchema = z.object({
     .string()
     .nonempty("Informe o telefone")
     .max(15, "O telefone deve ter no máximo 15 caracteres")
-    .regex(/^\(\d{2}\)\d{5}-\d{4}$/, "Telefone inválido, use o formato (00)00000-0000")
+    .regex(/^\(\d{2}\)\s?\d{5}-\d{4}$/, "Telefone inválido, use o formato (00) 00000-0000")
 });
 
 export type StepThreeData = z.infer<typeof stepThreeSchema>;

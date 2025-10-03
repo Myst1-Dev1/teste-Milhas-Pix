@@ -5,7 +5,7 @@ import { Loading } from "@/components/loading";
 import { handleMoneyChange } from "@/utils/masks/money_mask";
 import { stepTwoSchema } from "@/utils/validations/stepTwo";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown, PiPlus } from "react-icons/pi";
@@ -22,7 +22,7 @@ type RankingData = {
 }
 
 export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } , setValue } = useForm<StepTwo>(
+    const { register, handleSubmit, watch, formState: { errors, isSubmitting } , setValue } = useForm<StepTwo>(
         { 
             defaultValues: formData ,
             resolver: zodResolver(stepTwoSchema)
@@ -33,7 +33,11 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
     const [rankingData, setRankingData] = useState<RankingData[]>([]);
     const [selectHowToReceive, setSelectHowToReceive] = useState('Imediato')
 
+    const value = watch('milesValue');
+
     const fetchRanking = async (value: string) => {
+        if(!value) return;
+
         try {
             const response = await fetch(`https://api.milhaspix.com/simulate-ranking?mile_value=${value}`, {
                 method: 'GET',
@@ -56,13 +60,17 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
         setSteps('loyalty');
     };
 
+    useEffect(() => {
+        fetchRanking(value);
+    }, [value]);
+
     return (
         <>
             <form onSubmit={handleSubmit(handleProceed)} className="col-span-1 lg:col-span-2 px-4 lg:px-0">
                 <div className="w-full rounded-lg border border-[#E2E2E2]">
                     <div className="p-3 border-b border-[#E2E2E2] flex justify-between items-center">
                         <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">02.</span>  Oferte suas milhas</h2>
-                        <span className="hidden lg:block px-4 py-1 bg-red-100 rounded-full text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>
+                        {errors.milesValue && <span className="hidden lg:block px-4 py-1 bg-red-100 rounded-full text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>}
                     </div>
                     <div className="p-3">
                         <h2 className="mb-2 font-medium text-[#2E3D50]">Quero receber</h2>
@@ -102,7 +110,7 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                         </div>
                         <div className="flex flex-col gap-3">
                             <label htmlFor="milhas" className="font-medium text-[#2E3D50] text-lg">Valor a cada 1.000 milhas</label>
-                            <div className={`flex items-center justify-between border ${errors.milesValue ? 'border-red-500' : 'border-[#E2E2E2]'} rounded-full px-3 py-2 w-full`}>
+                            <div className={`relative border ${errors.milesValue ? 'border-red-500' : 'border-[#E2E2E2]'} rounded-full px-3 py-2 w-full`}>
                                 <div className="flex items-center pr-2">
                                     <span className={`${errors.milesValue ? 'bg-red-100 text-[#DC2B2B]' : 'bg-[#E2E2E2] text-[#2E3D50]'} px-2 py-1 rounded-full text-sm font-semibold`}>
                                         R$
@@ -115,19 +123,18 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                                         {...register("milesValue", { required: true })}
                                     />
                                 </div>
-                                <PiCaretDoubleDown className={`${errors.milesValue ? 'text-[#DC2B2B]' : 'text-gray-600'} text-lg shrink-0 -ml-5`} />
+                                <PiCaretDoubleDown className={`${errors.milesValue ? 'text-[#DC2B2B]' : 'text-gray-600'} text-lg shrink-0 absolute right-3 top-3`} />
                             </div>
-                            <span className="block lg:hidden text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>
-                            <div className="lg:hidden flex gap-2 flex-wrap">
+                            {errors.milesValue &&
+                                <span className="block lg:hidden text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>
+                            }
+                            <div className="lg:hidden flex gap-2 mt-3 flex-wrap">
                                 <span className="primary-color border border-gray-300 rounded-full py-1 px-2">1º R$ 15,23</span>
                                 <span className="primary-color border border-gray-300 rounded-full py-1 px-2">2º R$ 15,23</span>
                                 <span className="primary-color border border-gray-300 rounded-full py-1 px-2">3º R$ 15,23</span>
                                 <span className="text-[#12A19A] bg-[#12A19A1A] border-2 border-[#12A19A] rounded-full py-1 px-2">Você 4º R$ 15,23</span>
                                 <span className="primary-color border border-gray-300 rounded-full py-1 px-2">5º R$ 15,23</span>
                             </div>
-                            {errors.milesValue && (
-                                <p className="text-red-500 text-sm mt-1">{errors.milesValue.message}</p>
-                            )}
                         </div>
                     </div>
                     <div>
@@ -154,6 +161,27 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                     <button type="submit" className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
                         {isSubmitting ? <Loading /> : <>Prosseguir <PiArrowRight className="text-lg" /></>}
                     </button>
+                </div>
+
+                <div className="absolute -bottom-[180px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
+                    <button onClick={() => setSteps('program')} className={`w-10 h-10 border border-gray-300 rounded-full grid place-items-center text-[#2E3D50] text-lg`}>
+                        <PiArrowLeft />
+                    </button>
+                    <div className="flex items-center gap-4 justify-end flex-1">
+                        <p className="text-[#475569] font-medium">
+                            <span className="primary-color">2</span> de 4
+                        </p>
+
+                        <button
+                            type="submit"
+                            className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                            >
+                            {isSubmitting ? <Loading /> : 
+                            <>
+                                Prosseguir <PiArrowRight className="text-lg" />
+                            </>}
+                        </button>
+                    </div>
                 </div>
             </form>
             <div className="px-4 lg:px-0">

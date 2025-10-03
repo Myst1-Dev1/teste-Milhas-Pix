@@ -9,7 +9,9 @@ export const stepOneSchema = z.object({
     .refine((cpf) => validarCPF(cpf), {
       message: "CPF inválido",
     }),
-    program: z.string()
+    program: z.string().refine((val) => val !== "Selecione o programa", {
+    message: "Selecione um programa válido",
+  })
 });
 
 export type StepOneData = z.infer<typeof stepOneSchema>;

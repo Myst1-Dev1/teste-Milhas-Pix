@@ -19,9 +19,18 @@ export function ShowYourProgram({ setSteps, formData }:ShowYourProgramProps) {
         { 
             defaultValues: formData ,
             resolver: zodResolver(stepOneSchema)
-        });
+        }
+    );
 
-    const [selectedProgram, setSelectedProgram] = useState('Tudo Azul')
+    const [selectedProgram, setSelectedProgram] = useState('Tudo Azul');
+    const [programSelectValue, setProgramSelectValue] = useState("Selecione o programa");
+
+    const logos: Record<string, string> = {
+        "Tudo Azul": "/images/tudoAzul-logo.png",
+        "Smiles": "/images/smiles-logo.png",
+        "Latam Pass": "/images/latamPass-logo.png",
+        "Air Portugal": "/images/airPortugal-logo.png",
+    };
 
     const handleProceed = async (formData: StepOne) => {
         console.log("Dados", formData);
@@ -39,14 +48,29 @@ export function ShowYourProgram({ setSteps, formData }:ShowYourProgramProps) {
                         <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">01.</span>  Escolha o programa de fidelidade</h2>
                     </div>
                     <div className="mt-3 px-4 block lg:hidden">
-                        <div className="flex justify-between items-center outline-none text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full p-3 w-full appearance-none pr-10">
-                            <div className="flex items-center gap-3">
-                                <PiArrowsCounterClockwise className="primary-color" />
-                                Tudo Azul
-                            </div>
-                            <Image src="/images/tudoAzul-logo.png" className="w-13 object-cover" width={200} height={200} alt="logo do tudo azul" />
+                        <div className="flex justify-between items-center text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full p-3 w-full pr-10">
+                            {selectedProgram && (
+                                <>
+                                    <div className="flex items-center gap-3">
+                                        <PiArrowsCounterClockwise className="primary-color" />
+                                        {selectedProgram}
+                                    </div>
+                                    {logos[selectedProgram] && (
+                                        <Image
+                                            src={logos[selectedProgram]}
+                                            className="w-13 object-cover"
+                                            width={200}
+                                            height={200}
+                                            alt={`logo do ${selectedProgram}`}
+                                        />
+                                    )}
+                                </>
+                            )}
                         </div>
                     </div>
+                       {errors.program && 
+                            <p className="text-red-500 text-sm mt-1 p-3">{errors.program.message}</p>
+                       }
                     <div className="p-4 hidden lg:flex justify-between gap-3">
                         <div onClick={() => {setSelectedProgram('Tudo Azul'); setValue("program", "Tudo Azul")}} className={`cursor-pointer border-2 ${selectedProgram === 'Tudo Azul' ? 'border-[#1E90FF]' : 'border-gray-300 opacity-50'} rounded-full  w-full p-2 grid place-items-center`}>
                             <Image src="/images/tudoAzul-logo.png" className="w-13 object-contain" width={200} height={200} alt="logo do tudo azul" />
@@ -100,14 +124,41 @@ export function ShowYourProgram({ setSteps, formData }:ShowYourProgramProps) {
                 <button type="submit" className="hidden ml-auto font-medium mt-4 p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white lg:flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
                     {isSubmitting ? <Loading /> : <>Prosseguir <PiArrowRight className="text-lg" /></>}
                 </button>
-            </form>
-            <div className="w-full px-4 lg:px-0">
-                <div className="block lg:hidden border border-gray-300 p-3 rounded-lg h-fit mb-4">
-                    <div className="flex items-center">
-                        <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>
-                        <PiPlus className="ml-auto block primary-color text-xl lg:hidden" />
-                    </div>
+                <div className="absolute bottom-0 left-0 right-0 lg:hidden border-t border-gray-300 p-4 flex items-center gap-4 justify-end">
+                    <p className="text-[#475569] font-medium">
+                        <span className="primary-color">1</span> de 4
+                    </p>
+
+                    <button
+                        type="submit"
+                        className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                        >
+                        {isSubmitting ? <Loading /> : 
+                        <>
+                            Prosseguir <PiArrowRight className="text-lg" />
+                        </>}
+                    </button>
                 </div>
+                <div className="relative mt-6 block lg:hidden border border-gray-300 rounded-lg">
+                    <select 
+                        className="w-full appearance-none border-b border-gray-300 p-3 mb-2 outline-none h-fit"
+                        onChange={(e) => {
+                            setSelectedProgram(e.target.value);
+                            setValue("program", e.target.value);
+                        }}
+                        defaultValue="Selecione o programa"
+                    >
+                        <option value="Selecione o programa">Selecione o programa</option>
+                        <option value="Tudo Azul">Tudo Azul</option>
+                        <option value="Smiles">Smiles</option>
+                        <option value="Latam Pass">Latam Pass</option>
+                        <option value="Air Portugal">Air Portugal</option>
+                    </select>
+                    <PiPlus className="ml-auto block primary-color text-xl lg:hidden absolute right-3 top-4" />
+                    <p className="p-3 font-normal text-sm text-[#475569]">Escolha de qual programa de fidelidade você quer vender suas milhas. Use apenas contas em seu nome.</p>
+                </div>
+            </form>
+            <div className="w-full px-4 lg:px-0 hidden lg:block">
                 <div className="border border-gray-300 p-3 rounded-lg h-fit mb-8">
                     <div className="flex items-center">
                         <h3 className="text-[#2E3D50] font-medium text-lg">Selecione o programa</h3>

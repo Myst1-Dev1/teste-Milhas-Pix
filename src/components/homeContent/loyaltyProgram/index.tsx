@@ -45,7 +45,7 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                         <div className="flex flex-col gap-2">
                             <label htmlFor="product" className="text-[#2E3D50] font-medium text-lg">CPF do Titular</label>
                             <div className="flex justify-between items-center gap-3 text-[#2E3D50] font-medium border border-[#E2E2E2] rounded-full py-3 w-full">
-                                <input type="tel" className="outline-none px-3" {...register("cpfOfTheHolder", { required: true })} onInput={handleCpfChange} maxLength={11} placeholder="123.456.798-00" />
+                                <input type="tel" className="outline-none px-3" {...register("cpfOfTheHolder", { required: true })} onInput={handleCpfChange} maxLength={14} placeholder="123.456.798-00" />
                                 <PiUserCircle className="mr-3 primary-color text-lg" />
                             </div>
                             {errors.cpfOfTheHolder && (
@@ -93,8 +93,29 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                     <button onClick={() => setSteps('miles')} className="font-medium p-3 w-fit rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
                     <div className="flex items-center flex-col lg:flex-row gap-3">
                         <p className="font-medium text-[#2E3D50] text-xs">Ao prosseguir você concorda com os <Link href="" className="border-b border-gray-400 transition-all duration-500 hover:text-[#1E90FF] hover:border-[#1E90FF]">Termos de uso</Link></p>
-                        <button type="submit" className="font-medium px-4 py-3 w-fit rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
+                        <button type="submit" className="font-medium px-7 py-3 max-w-32 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
                             {isSubmitting ? <Loading /> : <>Concluir <PiArrowRight className="text-lg" /></>}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="absolute -bottom-[50px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
+                    <button onClick={() => setSteps('miles')} className={`w-10 h-10 border border-gray-300 rounded-full grid place-items-center text-[#2E3D50] text-lg`}>
+                        <PiArrowLeft />
+                    </button>
+                    <div className="flex items-center gap-4 justify-end flex-1">
+                        <p className="text-[#475569] font-medium">
+                            <span className="primary-color">3</span> de 4
+                        </p>
+
+                        <button
+                            type="submit"
+                            className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                            >
+                            {isSubmitting ? <Loading /> : 
+                            <>
+                                Prosseguir <PiArrowRight className="text-lg" />
+                            </>}
                         </button>
                     </div>
                 </div>
