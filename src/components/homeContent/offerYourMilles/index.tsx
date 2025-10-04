@@ -1,10 +1,12 @@
 'use client';
 
-import { StepTwo } from "@/@types/StepsTypes";
+import { AllData, StepTwo } from "@/@types/StepsTypes";
 import { Loading } from "@/components/loading";
 import { handleMoneyChange } from "@/utils/masks/money_mask";
 import { stepTwoSchema } from "@/utils/validations/stepTwo";
+import { useGSAP } from "@gsap/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import gsap from "gsap";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -13,6 +15,7 @@ import { PiAirplaneInFlightBold, PiArrowLeft, PiArrowRight, PiCaretDoubleDown, P
 interface OfferYourMillesProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
     formData: StepTwo;
+    setFormData:React.Dispatch<React.SetStateAction<AllData>>
 }
 
 type RankingData = {
@@ -54,6 +57,11 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
     };
 
     const handleProceed = async (formData: StepTwo) => {
+        const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
+        const updatedFormData = { ...existingFormData, ...formData };
+
+        localStorage.setItem('formData', JSON.stringify(updatedFormData));
+
         await new Promise((resolve) => setTimeout(resolve, 2000));
         
         console.log("Dados", formData);
@@ -64,9 +72,16 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
         fetchRanking(value);
     }, [value]);
 
+    useGSAP(() => {
+        gsap.fromTo('.toogleContent', 
+            { opacity:0, y:30 }, 
+            { opacity:1, y:0, duration:0.4, ease:'power1' }
+        );
+    }, [toogleMidia]);
+
     return (
         <>
-            <form onSubmit={handleSubmit(handleProceed)} className="col-span-1 lg:col-span-2 px-4 lg:px-0">
+            <form onSubmit={handleSubmit(handleProceed)} className="form col-span-1 lg:col-span-2 px-4 lg:px-0">
                 <div className="w-full rounded-lg border border-[#E2E2E2]">
                     <div className="p-3 border-b border-[#E2E2E2] flex justify-between items-center">
                         <h2 className="font-medium text-[#2E3D50] text-lg"><span className="primary-color">02.</span>  Oferte suas milhas</h2>
@@ -145,7 +160,7 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                             <h3 className="text-[#8F8F8F] font-medium">Definir média de milhas por passageiro</h3>
                         </div>
                         {toogleMidia &&
-                            <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+                            <div className="toogleContent p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                                 <div className="font-medium border border-[#E2E2E2] text-[#2E3D50] rounded-full py-2 px-3 w-full">
                                     10.000
                                 </div>
@@ -158,7 +173,7 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                 </div>
                 <div className="hidden lg:flex justify-between mt-4 mb-0 lg:mb-4">
                     <button onClick={() => setSteps('program')} className="font-medium p-3 max-w-28 w-full rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
-                    <button type="submit" className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
+                    <button type="submit" className="font-medium p-3 max-w-40 h-[50px] w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
                         {isSubmitting ? <Loading /> : <>Prosseguir <PiArrowRight className="text-lg" /></>}
                     </button>
                 </div>
@@ -184,39 +199,41 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                     </div>
                 </div>
             </form>
-            <div className="px-4 lg:px-0">
-                <div className="border border-gray-300 p-3 rounded-lg h-fit">
-                    <div className="flex items-center">
-                        <h3 className="text-[#2E3D50] font-medium text-lg">Média de milhas</h3>
-                        <PiPlus className="ml-auto block primary-color text-xl lg:hidden" />
+            <div className="box">
+                <div className="px-4 lg:px-0">
+                    <div className="border border-gray-300 p-3 rounded-lg h-fit">
+                        <div className="flex items-center">
+                            <h3 className="text-[#2E3D50] font-medium text-lg">Média de milhas</h3>
+                            <PiPlus className="ml-auto block primary-color text-xl lg:hidden" />
+                        </div>
+                        <p className="font-normal text-sm text-[#475569]">Ao vender mais de 20.000 milhas, ative as Opções Avançadas para definir a média de milhas por emissão.</p>
                     </div>
-                    <p className="font-normal text-sm text-[#475569]">Ao vender mais de 20.000 milhas, ative as Opções Avançadas para definir a média de milhas por emissão.</p>
-                </div>
-                <div className="hidden lg:block mt-3">
-                    <h3 className="text-[#2E3D50] font-medium text-lg">Ranking de ofertas</h3>
-                    <div className="mt-3 border border-gray-300 rounded-lg">
-                        {rankingData?.map((rank, index:number) => (
-                            <div key={index} className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                                <span className="primary-color">{rank.position}º</span>
-                                {Intl.NumberFormat('pt-br', {
-                                    style:'currency',
-                                    currency: 'BRL'
-                                }).format(rank.mile_value)}
-                            </div>
-                        ))}
+                    <div className="hidden lg:block mt-3">
+                        <h3 className="text-[#2E3D50] font-medium text-lg">Ranking de ofertas</h3>
+                        <div className="mt-3 border border-gray-300 rounded-lg">
+                            {rankingData?.map((rank, index:number) => (
+                                <div key={index} className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
+                                    <span className="primary-color">{rank.position}º</span>
+                                    {Intl.NumberFormat('pt-br', {
+                                        style:'currency',
+                                        currency: 'BRL'
+                                    }).format(rank.mile_value)}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="mt-3">
+                        <h3 className="hidden lg:block text-[#2E3D50] font-medium text-lg">Receba até:</h3>
+                        <div className="hidden lg:flex justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-medium text-lg">
+                            <span>R$</span>
+                            24.325,23
+                        </div>
                     </div>
                 </div>
-                <div className="mt-3">
-                    <h3 className="hidden lg:block text-[#2E3D50] font-medium text-lg">Receba até:</h3>
-                    <div className="hidden lg:flex justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-medium text-lg">
-                        <span>R$</span>
-                        24.325,23
-                    </div>
+                <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
+                    <span className="font-medium">Receba até</span>
+                    R$24.325,23
                 </div>
-            </div>
-            <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
-                <span className="font-medium">Receba até</span>
-                R$24.325,23
             </div>
         </>
     )

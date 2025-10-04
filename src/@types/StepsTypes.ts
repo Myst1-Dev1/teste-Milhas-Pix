@@ -16,3 +16,16 @@ export type StepThree = {
     password: string;
     phone: string;
 }
+
+export type AllData = {
+    product: string;
+    cpf: string;
+    program: string;
+     milesValue: string;
+    milesToOffer: string;
+    howToReceive: string;
+    cpfOfTheHolder: string;
+    accessLogin: string;
+    password: string;
+    phone: string;
+}

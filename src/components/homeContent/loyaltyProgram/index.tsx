@@ -5,7 +5,7 @@ import { PiArrowLeft, PiArrowRight, PiLockSimple, PiMinus, PiUserCircle } from "
 import Link from "next/link";
 import { handleCpfChange } from "@/utils/masks/cpf_mask";
 import { handlePhoneChange } from "@/utils/masks/phone_mask";
-import { StepThree } from "@/@types/StepsTypes";
+import { AllData, StepThree } from "@/@types/StepsTypes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { stepThreeSchema } from "@/utils/validations/stepThree";
@@ -14,6 +14,7 @@ import { Loading } from "@/components/loading";
 interface LoyaltyProgramProps {
     setSteps: React.Dispatch<React.SetStateAction<string>>
     formData: StepThree;
+    setFormData:React.Dispatch<React.SetStateAction<AllData>>
 }
 
 export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
@@ -25,21 +26,28 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
     );
 
     const handleProceed = async (formData: StepThree) => {
-            console.log("Dados", formData);
-    
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            
-            setSteps('finish');
-        };
+        const existingFormData = JSON.parse(localStorage.getItem('formData') || '{}');
+        const updatedFormData = { ...existingFormData, ...formData };
+
+        localStorage.setItem('formData', JSON.stringify(updatedFormData));
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        
+        const data = JSON.parse(localStorage.getItem('formData') || '{}');
+        console.log('Dados:', data);
+
+        setSteps('finish');
+        localStorage.removeItem('formData');
+    };
 
     return (
         <>
-            <form onSubmit={handleSubmit(handleProceed)} className="col-span-1 px-4 lg:px-0 lg:col-span-2">
+            <form onSubmit={handleSubmit(handleProceed)} className="form col-span-1 px-4 lg:px-0 lg:col-span-2">
                 <div className="w-full h-fit rounded-lg border border-[#E2E2E2]">
                     <div className="p-4 border-b border-[#E2E2E2] flex justify-between items-center">
                         <h2 className="font-medium text-[#2E3D50] text-lg hidden lg:block"><span className="primary-color">03.</span>  Insira os dados do programa de fidelidade</h2>
                         <h2 className="font-medium text-[#2E3D50] text-lg block lg:hidden"><span className="primary-color">03.</span>  Dados do programa</h2>
-                        <Image src="/images/tudoAzul-logo.png" className="shrink-0 w-14 object-cover" width={200} height={200} alt="logo do tudo azul" />
+                        <Image src="/images/tudoAzul-logo.png" className="shrink-0 w-14 h-8 object-contain" width={200} height={200} alt="logo do tudo azul" />
                     </div>
                     <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                         <div className="flex flex-col gap-2">
@@ -92,9 +100,9 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                 <div className="hidden lg:flex justify-between flex-col lg:flex-row gap-4 lg:gap-0 mt-4">
                     <button onClick={() => setSteps('miles')} className="font-medium p-3 w-fit rounded-full border border-gray-300 text-[#2E3D50] flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:bg-[#1E90FF] hover:text-white"><PiArrowLeft className="text-lg" /> Voltar</button>
                     <div className="flex items-center flex-col lg:flex-row gap-3">
-                        <p className="font-medium text-[#2E3D50] text-xs">Ao prosseguir você concorda com os <Link href="" className="border-b border-gray-400 transition-all duration-500 hover:text-[#1E90FF] hover:border-[#1E90FF]">Termos de uso</Link></p>
-                        <button type="submit" className="font-medium px-7 py-3 max-w-32 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
-                            {isSubmitting ? <Loading /> : <>Concluir <PiArrowRight className="text-lg" /></>}
+                        <p className="font-medium text-[#2E3D50] text-xs pr-3">Ao prosseguir você concorda com os <Link href="" className="border-b border-gray-400 transition-all duration-500 hover:text-[#1E90FF] hover:border-[#1E90FF]">Termos de uso</Link></p>
+                        <button type="submit" className="font-medium px-3 py-3 w-28 h-[50px] rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
+                            {isSubmitting ? <Loading /> : <>Concluir <PiArrowRight className="text-lg shrink-0" /></>}
                         </button>
                     </div>
                 </div>
@@ -120,18 +128,20 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                     </div>
                 </div>
             </form>
-            <div className=" px-4 lg:px-0">
-                <div className="border border-gray-300 p-3 rounded-lg h-fit">
-                    <div className="flex items-center">
-                        <h3 className="text-[#2E3D50] font-medium text-lg">Dados da conta</h3>
-                        <PiMinus className="ml-auto block text-[#8F8F8F] text-xl lg:hidden" />
+            <div className="box">
+                <div className=" px-4 lg:px-0">
+                    <div className="border border-gray-300 p-3 rounded-lg h-fit">
+                        <div className="flex items-center">
+                            <h3 className="text-[#2E3D50] font-medium text-lg">Dados da conta</h3>
+                            <PiMinus className="ml-auto block text-[#8F8F8F] text-xl lg:hidden" />
+                        </div>
+                        <p className="font-normal text-sm text-[#475569]">Por favor, insira os dados da conta que deseja cadastrar e verifique se estão corretos.</p>
                     </div>
-                    <p className="font-normal text-sm text-[#475569]">Por favor, insira os dados da conta que deseja cadastrar e verifique se estão corretos.</p>
                 </div>
-            </div>
-            <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
-                <span className="font-medium">Receba até</span>
-                R$24.325,23
+                <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
+                    <span className="font-medium">Receba até</span>
+                    R$24.325,23
+                </div>
             </div>
         </>
     )
