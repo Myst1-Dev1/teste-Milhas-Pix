@@ -125,14 +125,14 @@ export function ShowYourProgram({ setSteps, formData }:ShowYourProgramProps) {
                 <button type="submit" className="hidden ml-auto font-medium mt-4 p-3 max-w-40 w-full h-[50px] rounded-full bg-[#1E90FF] text-white lg:flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90">
                     {isSubmitting ? <Loading /> : <>Prosseguir <PiArrowRight className="text-lg" /></>}
                 </button>
-                <div className="absolute bottom-0 left-0 right-0 lg:hidden border-t border-gray-300 p-4 flex items-center gap-4 justify-end">
+                <div className="absolute -bottom-[100px] left-0 right-0 lg:hidden border-t border-gray-300 p-4 flex items-center gap-4 justify-end">
                     <p className="text-[#475569] font-medium">
                         <span className="primary-color">1</span> de 4
                     </p>
 
                     <button
                         type="submit"
-                        className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                        className="font-medium p-3 max-w-40 h-[50px] w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
                         >
                         {isSubmitting ? <Loading /> : 
                         <>

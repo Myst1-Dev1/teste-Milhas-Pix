@@ -107,7 +107,7 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                     </div>
                 </div>
 
-                <div className="absolute -bottom-[50px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
+                <div className="absolute -bottom-[280px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
                     <button onClick={() => setSteps('miles')} className={`w-10 h-10 border border-gray-300 rounded-full grid place-items-center text-[#2E3D50] text-lg`}>
                         <PiArrowLeft />
                     </button>
@@ -118,11 +118,11 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
 
                         <button
                             type="submit"
-                            className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                            className="font-medium p-3 max-w-40 h-[50px] w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
                             >
                             {isSubmitting ? <Loading /> : 
                             <>
-                                Prosseguir <PiArrowRight className="text-lg" />
+                                Concluir <PiArrowRight className="text-lg" />
                             </>}
                         </button>
                     </div>
@@ -138,7 +138,7 @@ export function LoyaltyProgram({ setSteps, formData }:LoyaltyProgramProps) {
                         <p className="font-normal text-sm text-[#475569]">Por favor, insira os dados da conta que deseja cadastrar e verifique se estão corretos.</p>
                     </div>
                 </div>
-                <div className="flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
+                <div className="mt-3 flex lg:hidden justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-bold text-lg">
                     <span className="font-medium">Receba até</span>
                     R$24.325,23
                 </div>

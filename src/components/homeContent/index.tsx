@@ -17,7 +17,7 @@ export function HomeContent() {
             program: "",
             milesValue: '',
             milesToOffer: '',
-            howToReceive: '',
+            howToReceive: 'Imediato',
             cpfOfTheHolder: '',
             accessLogin: '',
             password: '',

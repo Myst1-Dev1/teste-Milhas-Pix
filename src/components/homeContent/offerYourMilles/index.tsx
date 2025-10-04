@@ -39,15 +39,12 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
     const value = watch('milesValue');
 
     const fetchRanking = async (value: string) => {
-        if(!value) return;
+        if (!value) return;
+
+        const normalizedValue = value.replace(",", ".");
 
         try {
-            const response = await fetch(`https://api.milhaspix.com/simulate-ranking?mile_value=${value}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await fetch(`/api/ranking?mile_value=${normalizedValue}`);
             const data = await response.json();
             console.log(data);
             setRankingData(data);
@@ -144,11 +141,17 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                                 <span className="block lg:hidden text-[#DC2B2B] font-medium">Escolha entre <span className="font-bold">R$ 14,00</span> e <span className="font-bold">R$ 16,56</span></span>
                             }
                             <div className="lg:hidden flex gap-2 mt-3 flex-wrap">
-                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">1º R$ 15,23</span>
-                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">2º R$ 15,23</span>
-                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">3º R$ 15,23</span>
-                                <span className="text-[#12A19A] bg-[#12A19A1A] border-2 border-[#12A19A] rounded-full py-1 px-2">Você 4º R$ 15,23</span>
-                                <span className="primary-color border border-gray-300 rounded-full py-1 px-2">5º R$ 15,23</span>
+                                 {Array.isArray(rankingData) &&
+                                    rankingData
+                                    .sort((a, b) => a.position - b.position)
+                                    .map((rank, index: number) => (
+                                    <span key={index} className={`border ${rank.description === 'essa será sua posição' ? 'border-[#12A19A] bg-[#12A19A1A] text-[#12A19A]' : 'primary-color border-gray-300'} rounded-full py-1 px-2`}>
+                                        {rank.description === 'essa será sua posição' ? 'Você' : ''} {rank.position}º {Intl.NumberFormat("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                        }).format(rank.mile_value)}
+                                    </span>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -178,7 +181,7 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                     </button>
                 </div>
 
-                <div className="absolute -bottom-[180px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
+                <div className="absolute -bottom-[300px] left-0 right-0 w-full flex justify-between items-center lg:hidden border-t border-gray-300 p-4">
                     <button onClick={() => setSteps('program')} className={`w-10 h-10 border border-gray-300 rounded-full grid place-items-center text-[#2E3D50] text-lg`}>
                         <PiArrowLeft />
                     </button>
@@ -189,7 +192,7 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
 
                         <button
                             type="submit"
-                            className="font-medium p-3 max-w-40 w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
+                            className="font-medium p-3 max-w-40 h-[50px] w-full rounded-full bg-[#1E90FF] text-white flex justify-center items-center gap-3 cursor-pointer transition-all duration-500 hover:brightness-90 disabled:opacity-50"
                             >
                             {isSubmitting ? <Loading /> : 
                             <>
@@ -208,20 +211,28 @@ export function OfferYourMilles({ setSteps, formData }:OfferYourMillesProps) {
                         </div>
                         <p className="font-normal text-sm text-[#475569]">Ao vender mais de 20.000 milhas, ative as Opções Avançadas para definir a média de milhas por emissão.</p>
                     </div>
+                    {Array.isArray(rankingData) &&
                     <div className="hidden lg:block mt-3">
                         <h3 className="text-[#2E3D50] font-medium text-lg">Ranking de ofertas</h3>
                         <div className="mt-3 border border-gray-300 rounded-lg">
-                            {rankingData?.map((rank, index:number) => (
-                                <div key={index} className="font-medium flex gap-4 border-b border-gray-300 text-[#2E3D50] p-3">
-                                    <span className="primary-color">{rank.position}º</span>
-                                    {Intl.NumberFormat('pt-br', {
-                                        style:'currency',
-                                        currency: 'BRL'
-                                    }).format(rank.mile_value)}
-                                </div>
+                            {Array.isArray(rankingData) &&
+                                rankingData
+                                    .sort((a, b) => a.position - b.position)
+                                    .map((rank, index: number) => (
+                                    <div
+                                        key={index}
+                                        className={`font-medium flex gap-4 border-b border-gray-300 ${rank.description === 'essa será sua posição' ? 'text-[#12A19A]' : 'text-[#2E3D50]'} p-3`}
+                                    >
+                                        <span className={rank.description === 'essa será sua posição' ? 'text-[#12A19A]' : 'primary-color'}>{rank.position}º</span>
+                                        {Intl.NumberFormat("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                        }).format(rank.mile_value)}
+                                        {rank.description === 'essa será sua posição' && <span className="px-2 text-sm bg-[#12A19A1A] rounded-full text-[#12A19A] ml-auto">Você</span>}
+                                    </div>
                             ))}
                         </div>
-                    </div>
+                    </div>}
                     <div className="mt-3">
                         <h3 className="hidden lg:block text-[#2E3D50] font-medium text-lg">Receba até:</h3>
                         <div className="hidden lg:flex justify-between p-3 w-full bg-[#12A19A1A] text-[#12A19A] font-medium text-lg">
