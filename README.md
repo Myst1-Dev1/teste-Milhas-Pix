@@ -91,3 +91,4 @@ pnpm dev
 - O formulário possui validação em cada etapa usando **Zod** e **React Hook Form**, garantindo que os dados estejam corretos antes de avançar.
 - As animações são feitas com **GSAP**, garantindo transições suaves entre elementos.
 - O consumo da API de ranking é feito a cada digitação no input de milheiro, garantindo atualização dinâmica da lista de ranking.
+- Foi criada uma rota proxy no Next.js (App Router) (/api/ranking) para contornar problemas de CORS. Essa rota valida se o valor informado está entre 14,00 e 16,56 antes de repassar a requisição para a API externa.
